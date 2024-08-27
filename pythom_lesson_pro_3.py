@@ -168,65 +168,84 @@ cart.checkout()
 
 #Task 3
 
-class ProperFraction:
-    def __init__(self, numerator, denominator=1):
+import math
+
+class RationalNumber:
+
+    def __init__(self, numerator: int, denominator: int):
+        if not isinstance(numerator, int):
+            raise TypeError("Numerator must be an integer")
+        if not isinstance(denominator, int):
+            raise TypeError("Denominator must be an integer")
+        if denominator == 0:
+            raise ZeroDivisionError("Denominator cannot be zero")
+
         self.numerator = numerator
         self.denominator = denominator
 
-    def __str__(self):
-        return f"{self.numerator}/{self.denominator}"
+    def __eq__(self, other):
+        return self.numerator * other.denominator == self.denominator * other.numerator
+
+    def __ne__(self, other):
+        return self.numerator * other.denominator != self.denominator * other.numerator
+
+    def __lt__(self, other):
+        return self.numerator * other.denominator < self.denominator * other.numerator
+
+    def __le__(self, other):
+        return self.numerator * other.denominator <= self.denominator * other.numerator
+
+    def __gt__(self, other):
+        return self.numerator * other.denominator > self.denominator * other.numerator
+
+    def __ge__(self, other):
+        return self.numerator * other.denominator >= self.denominator * other.numerator
+
+    def __radd__(self, other):
+        return self.__add__(other)
 
     def __add__(self, other):
-        if not isinstance(other, ProperFraction):
-            other = ProperFraction(other)
-        new_numerator = self.numerator * other.denominator + other.numerator * self.denominator
-        new_denominator = self.denominator * other.denominator
-        return ProperFraction(new_numerator, new_denominator)
+        if isinstance(other, int):
+            other = RationalNumber(other, 1)
 
-    def __sub__(self, other):
-        if not isinstance(other, ProperFraction):
-            other = ProperFraction(other)
-        new_numerator = self.numerator * other.denominator - other.numerator * self.denominator
-        new_denominator = self.denominator * other.denominator
-        return ProperFraction(new_numerator, new_denominator)
+        if not isinstance(other, RationalNumber):
+            return NotImplemented
 
-    def __mul__(self, other):
-        if not isinstance(other, ProperFraction):
-            other = ProperFraction(other)
-        new_numerator = self.numerator * other.numerator
-        new_denominator = self.denominator * other.denominator
-        return ProperFraction(new_numerator, new_denominator)
+        x = self.numerator * other.denominator + self.denominator * other.numerator
+        y = self.denominator * other.denominator
+        return RationalNumber(x, y)
 
-    def __truediv__(self, other):
-        if not isinstance(other, ProperFraction):
-            other = ProperFraction(other)
-        new_numerator = self.numerator * other.denominator
-        new_denominator = self.denominator * other.numerator
-        return ProperFraction(new_numerator, new_denominator)
+    def __str__(self):
+        gcd = math.gcd(self.numerator, self.denominator)
+        self.numerator //= gcd
+        self.denominator //= gcd
 
-    def __floordiv__(self, other):
-        if not isinstance(other, ProperFraction):
-            other = ProperFraction(other)
-        new_numerator = self.numerator // other.numerator
-        new_denominator = self.denominator // other.denominator
-        return ProperFraction(new_numerator, new_denominator)
+        sign = '-' if self.numerator * self.denominator < 0 else ''
+        tmp_x = abs(self.numerator)
+        tmp_y = abs(self.denominator)
+
+        if tmp_x == 0:
+            return '0'
+
+        if tmp_y == 1:
+            return f'{sign}{tmp_x}'
+
+        if tmp_x == tmp_y:
+            return f'{sign}1'
+
+        if tmp_x > tmp_y:
+            return f'{sign}{tmp_x // tmp_y} {tmp_x % tmp_y}/{tmp_y}'
+
+        return f'{sign}{tmp_x}/{tmp_y}'
 
 
-# Example
-a = ProperFraction(5, 4)
-b = ProperFraction(-1, 4)
-c = ProperFraction(3, 8)
-d = ProperFraction(3, 8)
-e = ProperFraction(2, 3)
+x_1 = RationalNumber(1, 2)
+x_2 = RationalNumber(3, 2)
+x_3 = RationalNumber(1, -3)
+x_4 = RationalNumber(-3, -1)
+x_5 = RationalNumber(0, 1)
 
-print(a)
-print(b)
-print(c)
-print(d)
-print(e)
+print(x_1, x_2, x_3, x_4, x_5, sep='\n')
 
-print(a + b)
-print(a - b)
-print(a * b)
-print(a / b)
-print(a // b)
+y_1 = 2 + x_1
+print(y_1)
