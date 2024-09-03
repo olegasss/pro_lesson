@@ -50,3 +50,97 @@ def divide(a, b):
 
 result = divide(5, 0)
 print(result)
+
+
+# Task 4
+
+import time
+
+def measure_time(func):
+    def wrapper(*args, **kwargs):
+        start_time = time.time()
+        result = func(*args, **kwargs)
+        end_time = time.time()
+        execution_time = end_time - start_time
+        print(f"Hour of execution '{func.__name__}': {execution_time:.10f} sec")
+        return result
+    return wrapper
+@measure_time
+def some_function():
+    time.sleep(2)
+
+some_function()
+
+
+# Task 5
+
+def log_arguments_results(func):
+    def wrapper(*args, **kwargs):
+
+        print(f"Arguments: {args}, Named arguments: {kwargs}")
+
+        result = func(*args, **kwargs)
+
+        print(f"Result: {result}")
+        return result
+    return wrapper
+
+@log_arguments_results
+def add_numbers(a, b):
+    return a + b
+
+add_numbers(3, 4)
+
+
+# Task 6
+
+
+def limit_calls(max_calls):
+    def decorator(func):
+        count = 0
+        def wrapper(*args, **kwargs):
+            nonlocal count
+            if count < max_calls:
+                count += 1
+                return func(*args, **kwargs)
+            else:
+                print("Max call limit.")
+
+        return wrapper
+
+    return decorator
+@limit_calls(3)
+def some_function():
+    print("Call function")
+
+some_function()
+some_function()
+some_function()
+some_function()
+
+
+# Task 7
+
+def cache_results(func):
+    cache = {}
+
+    def wrapper(*args):
+        if args in cache:
+            return cache[args]
+        result = func(*args)
+        cache[args] = result
+        return result
+
+    return wrapper
+
+
+@cache_results
+def fibonacci(n):
+    if n <= 1:
+        return n
+    else:
+        return fibonacci(n - 1) + fibonacci(n - 2)
+
+
+print(fibonacci(10))
+print(fibonacci(10))
