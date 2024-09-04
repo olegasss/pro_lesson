@@ -17,41 +17,31 @@ say_hello("Python")
 
 # Task 2
 
-import os
-import json
-from functools import wraps
+import logging
 
-def cache_results(filename):
+logging.basicConfig(level=logging.INFO)
+
+
+def write_data_to_file(file_name):
     def decorator(func):
-        @wraps(func)
-        def wrapper(*args):
-            if not os.path.exists(filename):
-                with open(filename, 'w') as f:
-                    json.dump({}, f)
-
-            with open(filename, 'r') as f:
-                results = json.load(f)
-
-            key = str(args)
-            if key in results:
-                print("Use of cached results.")
-                return results[key]
-
-            result = func(*args)
-            results[key] = result
-            with open(filename, 'w') as f:
-                json.dump(results, f)
-
-            return result
+        def wrapper(*args, **kwargs):
+            res = func(*args, **kwargs)
+            try:
+                with open(file_name, 'a') as f:
+                    f.write(f'{res}\n')
+            except Exception as e:
+                logging.error(e)
+            return res
         return wrapper
     return decorator
 
-@cache_results('results.json')
-def add(a, b):
-    return a + b
 
-print(add(1, 2))
-print(add(1, 2))
+@write_data_to_file('data.txt')
+def my_func():
+    return [1, 2, 3, 4]
+
+
+print(my_func())
 
 
 # Task 3
