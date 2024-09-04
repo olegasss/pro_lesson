@@ -17,20 +17,41 @@ say_hello("Python")
 
 # Task 2
 
+import os
+import json
+from functools import wraps
 
+def cache_results(filename):
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args):
+            if not os.path.exists(filename):
+                with open(filename, 'w') as f:
+                    json.dump({}, f)
 
+            with open(filename, 'r') as f:
+                results = json.load(f)
 
+            key = str(args)
+            if key in results:
+                print("Use of cached results.")
+                return results[key]
 
+            result = func(*args)
+            results[key] = result
+            with open(filename, 'w') as f:
+                json.dump(results, f)
 
+            return result
+        return wrapper
+    return decorator
 
+@cache_results('results.json')
+def add(a, b):
+    return a + b
 
-
-
-
-
-
-
-
+print(add(1, 2))
+print(add(1, 2))
 
 
 # Task 3
